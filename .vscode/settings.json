@@ -1,0 +1,61 @@
+{
+  // PHP settings
+  "php.validate.enable": true,
+  "php.validate.executablePath": "/opt/homebrew/bin/php",
+  "php.validate.run": "onSave",
+
+  // Editor settings
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+
+  // File associations
+  "files.associations": {
+    "*.php": "php",
+    "*.vue": "vue"
+  },
+
+  // Vue settings
+  "vetur.validation.template": true,
+  "vetur.format.defaultFormatter.html": "prettier",
+  "vetur.format.defaultFormatter.js": "prettier",
+
+  // JavaScript/TypeScript settings
+  "javascript.format.enable": true,
+  "javascript.validate.enable": true,
+  "typescript.validate.enable": true,
+
+  // Path Intellisense
+  "path-intellisense.mappings": {
+    "@": "${workspaceRoot}/src"
+  },
+
+  // Exclude directories from search
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/dist": true
+  },
+
+  // File watcher settings
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/vendor/**": true,
+    "**/dist/**": true
+  },
+
+  // Terminal settings
+  "terminal.integrated.defaultProfile.osx": "zsh",
+
+  // Git settings
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+
+  // Tailwind CSS settings
+  "css.validate": false,
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.validate": true
+}

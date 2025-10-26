@@ -213,7 +213,7 @@ import {
   SparklesIcon,
   StarIcon,
   TrophyIcon
-} from '@heroicons/vue/outline';
+} from '@heroicons/vue/24/outline';
 
 export default {
   name: 'ChildDashboard',

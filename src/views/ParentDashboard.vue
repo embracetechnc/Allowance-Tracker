@@ -187,16 +187,15 @@ export default {
     const authStore = useAuthStore();
     const children = ref([]);
     const recentTasks = ref([]);
+    const showAddChildModal = ref(false);
+    const showCreateTaskModal = ref(false);
+    const selectedChild = ref(null);
+    const allowanceChild = ref(null);
     const weeklyStats = ref({
       tasksCompleted: 0,
       pointsEarned: 0,
       allowancePaid: 0
     });
-
-    const showAddChildModal = ref(false);
-    const showCreateTaskModal = ref(false);
-    const selectedChild = ref(null);
-    const allowanceChild = ref(null);
 
     const fetchChildren = async () => {
       try {
@@ -229,21 +228,33 @@ export default {
 
     const addChild = async (childData) => {
       try {
+        console.log('Sending child data to server:', childData);
         const response = await axios.post('/api/children', childData);
         children.value.push(response.data);
         showAddChildModal.value = false;
+        // Refresh children list
+        await fetchChildren();
+        // Refresh weekly stats
+        await fetchWeeklyStats();
       } catch (error) {
         console.error('Failed to add child:', error);
+        throw error; // Propagate error to modal
       }
     };
 
     const createTask = async (taskData) => {
       try {
+        console.log('Creating task with data:', taskData);
         const response = await axios.post('/api/tasks', taskData);
         recentTasks.value.unshift(response.data);
         showCreateTaskModal.value = false;
+        // Refresh the task list
+        await fetchRecentTasks();
+        // Update weekly stats
+        await fetchWeeklyStats();
       } catch (error) {
         console.error('Failed to create task:', error);
+        throw error; // Propagate error to modal
       }
     };
 

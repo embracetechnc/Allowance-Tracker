@@ -31,18 +31,34 @@
                 <input
                   type="date"
                   id="start_date"
+                  name="start_date"
                   v-model="period.start_date"
-                  class="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                  :class="getFieldStateClasses('start_date', errors, touched)"
+                  @blur="handleFieldBlur('start_date')"
+                  @input="handleFieldInput('start_date')"
                 />
+                <div class="mt-1" v-if="touched.start_date">
+                  <p :class="['text-sm', getValidationMessage('start_date', errors, validationSchema).color]">
+                    {{ getValidationMessage('start_date', errors, validationSchema).message }}
+                  </p>
+                </div>
               </div>
               <div>
                 <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
                 <input
                   type="date"
                   id="end_date"
+                  name="end_date"
                   v-model="period.end_date"
-                  class="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                  :class="getFieldStateClasses('end_date', errors, touched)"
+                  @blur="handleFieldBlur('end_date')"
+                  @input="handleFieldInput('end_date')"
                 />
+                <div class="mt-1" v-if="touched.end_date">
+                  <p :class="['text-sm', getValidationMessage('end_date', errors, validationSchema).color]">
+                    {{ getValidationMessage('end_date', errors, validationSchema).message }}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -130,14 +146,22 @@
                 </label>
                 <select
                   id="payment_method"
+                  name="payment_method"
                   v-model="paymentMethod"
-                  class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  :class="getFieldStateClasses('payment_method', errors, touched)"
+                  @blur="handleFieldBlur('payment_method')"
+                  @change="handleFieldInput('payment_method')"
                 >
                   <option value="">Select Payment Method</option>
                   <option value="cash">Cash</option>
                   <option value="bank_transfer">Bank Transfer</option>
                   <option value="cash_app">Cash App</option>
                 </select>
+                <div class="mt-1" v-if="touched.payment_method">
+                  <p :class="['text-sm', getValidationMessage('payment_method', errors, validationSchema).color]">
+                    {{ getValidationMessage('payment_method', errors, validationSchema).message }}
+                  </p>
+                </div>
               </div>
 
               <!-- Pay Button -->
@@ -173,8 +197,9 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { format, subDays } from 'date-fns';
+import { ref, computed, reactive } from 'vue';
+import { format, subDays, isAfter, isBefore, isValid } from 'date-fns';
+import { fieldRequirements, validateField, validateForm, getFieldStateClasses, getValidationMessage } from '@/utils/validation';
 
 export default {
   name: 'AllowanceModal',
@@ -191,11 +216,44 @@ export default {
     const error = ref('');
     const calculation = ref(null);
     const paymentMethod = ref('');
+    const touched = reactive({});
+    const errors = reactive({});
 
     const period = ref({
       start_date: '',
       end_date: ''
     });
+
+    const validationSchema = {
+      start_date: {
+        required: true,
+        message: 'Please select a start date',
+        hint: 'When should the allowance period start?',
+        validate: (value) => {
+          if (!value) return false;
+          const date = new Date(value);
+          return isValid(date) && isBefore(date, new Date());
+        }
+      },
+      end_date: {
+        required: true,
+        message: 'Please select an end date',
+        hint: 'When should the allowance period end?',
+        validate: (value, form) => {
+          if (!value) return false;
+          const endDate = new Date(value);
+          const startDate = new Date(form.start_date);
+          return isValid(endDate) && 
+                 isBefore(endDate, new Date()) && 
+                 (!form.start_date || isAfter(endDate, startDate));
+        }
+      },
+      payment_method: {
+        required: (form) => !!calculation.value,
+        message: 'Please select a payment method',
+        hint: 'How would you like to pay the allowance?'
+      }
+    };
 
     const quickPeriods = {
       7: 'Last Week',
@@ -213,9 +271,38 @@ export default {
       };
     };
 
+    const validateField = (fieldName, value) => {
+      touched[fieldName] = true;
+      const result = validateField(value, validationSchema[fieldName]);
+      if (!result.isValid) {
+        errors[fieldName] = result.errors;
+      } else {
+        delete errors[fieldName];
+      }
+      return result.isValid;
+    };
+
+    const handleFieldBlur = (fieldName) => {
+      validateField(fieldName, fieldName === 'payment_method' ? paymentMethod.value : period.value[fieldName]);
+    };
+
+    const handleFieldInput = (fieldName) => {
+      if (touched[fieldName]) {
+        validateField(fieldName, fieldName === 'payment_method' ? paymentMethod.value : period.value[fieldName]);
+      }
+    };
+
     const calculateAllowance = async () => {
-      if (!period.value.start_date || !period.value.end_date) {
-        error.value = 'Please select a period';
+      // Mark date fields as touched
+      touched.start_date = true;
+      touched.end_date = true;
+
+      // Validate dates
+      const startValid = validateField('start_date', period.value.start_date);
+      const endValid = validateField('end_date', period.value.end_date);
+
+      if (!startValid || !endValid) {
+        error.value = 'Please fix the date errors before calculating';
         return;
       }
 
@@ -236,8 +323,14 @@ export default {
     };
 
     const payAllowance = async () => {
-      if (!calculation.value || !paymentMethod.value) {
-        error.value = 'Please calculate allowance and select payment method';
+      // Mark payment method as touched
+      touched.payment_method = true;
+
+      // Validate payment method
+      const paymentValid = validateField('payment_method', paymentMethod.value);
+
+      if (!paymentValid) {
+        error.value = 'Please select a valid payment method';
         return;
       }
 
@@ -270,10 +363,17 @@ export default {
       calculation,
       paymentMethod,
       quickPeriods,
+      errors,
+      touched,
+      validationSchema,
       setQuickPeriod,
       calculateAllowance,
       payAllowance,
-      formatDate
+      formatDate,
+      handleFieldBlur,
+      handleFieldInput,
+      getFieldStateClasses,
+      getValidationMessage
     };
   }
 };

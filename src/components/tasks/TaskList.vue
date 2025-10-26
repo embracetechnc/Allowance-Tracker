@@ -67,8 +67,15 @@
                     <span class="truncate">{{ task.description }}</span>
                   </p>
                 </div>
-                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                <div class="mt-2 flex items-center space-x-4 text-sm text-gray-500 sm:mt-0">
                   <p class="text-sm text-gray-500">Points: {{ task.points }}</p>
+                  <button
+                    v-if="isParent"
+                    @click="editTask(task)"
+                    class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Edit
+                  </button>
                 </div>
               </div>
             </div>
@@ -183,6 +190,10 @@ export default {
       emit('reject-task', task);
     };
 
+    const editTask = (task) => {
+      emit('edit-task', task);
+    };
+
     return {
       filters,
       filteredTasks,
@@ -192,7 +203,8 @@ export default {
       startTask,
       completeTask,
       verifyTask,
-      rejectTask
+      rejectTask,
+      editTask
     };
   }
 };

@@ -1,84 +1,99 @@
 # Family Allowance Tracker
 
-A modern web application for tracking children's allowances based on completed tasks and behavior.
+A modern web application for managing children's tasks, allowances, and rewards.
 
 ## Features
 
-- Task management system with parental verification
-- Bi-weekly allowance calculations
-- Automatic deductions based on school performance
-- Daily Bible verse integration
-- Cash App integration for payments
-- Email notifications for task completion
-- Progress tracking and reporting
+- Task Management
 
-## Tech Stack
+  - Create and assign tasks
+  - Track task completion
+  - Upload completion photos
+  - Task checklists
+  - Time tracking
 
-- Frontend: Vue.js, TailwindCSS, Chart.js
-- Backend: PHP 8.1
-- Database: MySQL
-- Authentication: JWT
-- Email: PHPMailer
-- Payment: Cash App API
+- Allowance System
 
-## Setup Instructions
+  - Weekly allowance rates
+  - Points-based rewards
+  - Task completion bonuses
+  - Payment tracking
+
+- Parent Controls
+
+  - Task categories
+  - Minimum requirements
+  - Task instructions
+  - Video tutorials
+
+- Child Features
+  - Task progress tracking
+  - Achievement system
+  - Reward redemption
+  - Activity history
+
+## Technology Stack
+
+- Frontend: Vue.js 3 with Composition API
+- State Management: Pinia
+- UI Framework: Tailwind CSS
+- Icons: Heroicons
+- Charts: Chart.js
+- Testing: Vitest + Cypress
+
+## Coverage
+
+![statements coverage](https://img.shields.io/badge/statements-85%-brightgreen)
+![branches coverage](https://img.shields.io/badge/branches-84%-brightgreen)
+![functions coverage](https://img.shields.io/badge/functions-82%-brightgreen)
+![lines coverage](https://img.shields.io/badge/lines-82%-brightgreen)
+## Development
+
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+- PHP 8.1+
+- Composer 2+
+- MySQL 8+
+
+### Setup
 
 1. Clone the repository
-2. Install PHP dependencies:
-   ```bash
-   composer install
-   ```
-3. Install Node.js dependencies:
+2. Install dependencies:
    ```bash
    npm install
+   composer install
    ```
-4. Copy `.env.example` to `.env` and configure:
-   - Database credentials
-   - Email settings
-   - Cash App API keys
-   - Bible.com API key
-
-5. Start development server:
+3. Set up environment:
+   ```bash
+   cp .env.example .env
+   ```
+4. Start development server:
    ```bash
    npm run dev
    ```
-   
-6. Start PHP server:
-   ```bash
-   php -S localhost:8000 -t public
-   ```
 
-## Environment Variables
+### Testing
 
-Create a `.env` file with the following variables:
+Run unit tests:
 
-```env
-DB_HOST=localhost
-DB_NAME=allowance_tracker
-DB_USER=root
-DB_PASS=
-
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=
-MAIL_PASSWORD=
-
-CASHAPP_CLIENT_ID=
-CASHAPP_CLIENT_SECRET=
-
-BIBLE_API_KEY=
+```bash
+npm run test
 ```
 
-## Project Structure
+Run test coverage:
 
+```bash
+npm run test:coverage
 ```
-├── src/
-│   ├── api/          # PHP backend files
-│   ├── components/   # Vue components
-│   ├── store/        # Vuex store modules
-│   ├── views/        # Vue page components
-│   └── router/       # Vue router configuration
-├── public/           # Static assets
-├── database/         # Database migrations and seeds
-└── tests/           # Test files
+
+Run end-to-end tests:
+
+```bash
+npm run test:e2e
 ```
+
+## License
+
+MIT License

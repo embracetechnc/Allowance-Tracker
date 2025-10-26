@@ -1,0 +1,38 @@
+{
+  "parent": {
+    "email": "william_stokes@hotmail.com",
+    "name": "William Stokes",
+    "role": "parent"
+  },
+  "children": [
+    {
+      "id": 1,
+      "name": "Hannah",
+      "email": "hannahastokes@icloud.com",
+      "allowance_balance": 0,
+      "weekly_allowance_rate": 20,
+      "role": "child"
+    },
+    {
+      "id": 2,
+      "name": "Haven",
+      "email": "havenastokes@icloud.com",
+      "allowance_balance": 0,
+      "weekly_allowance_rate": 20,
+      "role": "child"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "name": "Clean Room",
+      "description": "Make bed and vacuum floor",
+      "points": 5,
+      "status": "assigned",
+      "childId": 1,
+      "category": "Chores",
+      "due_date": "2025-10-30"
+    }
+  ]
+}
+

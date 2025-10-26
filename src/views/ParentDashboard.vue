@@ -1,47 +1,61 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <header class="bg-white shadow">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <h1 class="text-3xl font-bold text-gray-900">Parent Dashboard</h1>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Parent Dashboard</h1>
+          <button
+            @click="showCreateTaskModal = true"
+            class="mt-4 sm:mt-0 w-full sm:w-auto inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+            data-test="create-task"
+          >
+            Create Task
+          </button>
+        </div>
       </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <!-- Children Overview -->
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div v-for="child in children" :key="child.id" class="bg-white overflow-hidden shadow rounded-lg">
+        <div v-for="child in validChildren" :key="child.id" class="bg-white overflow-hidden shadow rounded-lg">
           <div class="px-4 py-5 sm:p-6">
-            <div class="flex items-center">
-              <div class="flex-shrink-0">
-                <div class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
-                  <span class="text-xl font-bold text-indigo-600">{{ child.name.charAt(0) }}</span>
+            <div class="flex flex-col sm:flex-row sm:items-center">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <div class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <span class="text-xl font-bold text-indigo-600">{{ child?.name?.charAt(0) || '?' }}</span>
+                  </div>
+                </div>
+                <div class="ml-5">
+                  <h3 class="text-lg font-medium text-gray-900">{{ child?.name || 'Unnamed Child' }}</h3>
+                  <p class="text-sm text-gray-500">{{ child?.email }}</p>
                 </div>
               </div>
-              <div class="ml-5 w-0 flex-1">
-                <dl>
-                  <dt class="text-sm font-medium text-gray-500 truncate">{{ child.name }}</dt>
-                  <dd class="flex items-baseline">
-                    <div class="text-2xl font-semibold text-gray-900">${{ child.allowance_balance }}</div>
-                    <div class="ml-2 flex items-baseline text-sm font-semibold">
-                      Weekly Rate: ${{ child.weekly_allowance_rate }}
-                    </div>
-                  </dd>
-                </dl>
+              <div class="mt-4 sm:mt-0 sm:ml-auto">
+                <div class="text-center sm:text-right">
+                  <p class="text-2xl font-semibold text-gray-900">${{ child?.allowance_balance?.toFixed(2) || '0.00' }}</p>
+                  <p class="text-sm text-gray-500">Weekly Rate: ${{ child?.weekly_allowance_rate?.toFixed(2) || '0.00' }}</p>
+                </div>
               </div>
             </div>
             <div class="mt-5">
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   @click="viewChild(child)"
-                  class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+                  class="w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+                  data-test="view-details"
                 >
-                  View Details
+                  <span class="sm:hidden">View</span>
+                  <span class="hidden sm:inline">View Details</span>
                 </button>
                 <button
                   @click="manageAllowance(child)"
-                  class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200"
+                  class="w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200"
+                  data-test="manage-allowance"
                 >
-                  Manage Allowance
+                  <span class="sm:hidden">Allowance</span>
+                  <span class="hidden sm:inline">Manage Allowance</span>
                 </button>
               </div>
             </div>
@@ -53,43 +67,36 @@
           @click="showAddChildModal = true"
           class="bg-gray-50 overflow-hidden shadow rounded-lg border-2 border-dashed border-gray-300 p-6 cursor-pointer hover:bg-gray-100"
         >
-          <div class="flex items-center justify-center h-full">
-            <button type="button" class="relative block w-full">
-              <svg
-                class="mx-auto h-12 w-12 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              <span class="mt-2 block text-sm font-medium text-gray-900">Add Child</span>
-            </button>
+          <div class="flex flex-col items-center justify-center h-full min-h-[200px] sm:min-h-0">
+            <svg
+              class="h-12 w-12 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            <span class="mt-2 text-sm font-medium text-gray-900">Add Child</span>
+            <p class="mt-1 text-sm text-gray-500 text-center hidden sm:block">
+              Add a new child to manage their tasks and allowance
+            </p>
           </div>
         </div>
       </div>
 
       <!-- Task Management Section -->
       <div class="mt-8">
-        <div class="sm:flex sm:items-center">
-          <div class="sm:flex-auto">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <div>
             <h2 class="text-xl font-semibold text-gray-900">Recent Tasks</h2>
             <p class="mt-2 text-sm text-gray-700">
               Overview of recently assigned and completed tasks.
             </p>
-          </div>
-          <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-            <button
-              @click="showCreateTaskModal = true"
-              class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
-            >
-              Create Task
-            </button>
           </div>
         </div>
 
@@ -105,23 +112,23 @@
       <div class="mt-8 bg-white shadow sm:rounded-lg">
         <div class="px-4 py-5 sm:p-6">
           <h3 class="text-lg font-medium leading-6 text-gray-900">Weekly Summary</h3>
-          <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-              <div class="px-4 py-5 sm:p-6">
+          <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            <div class="bg-white overflow-hidden shadow rounded-lg p-4 sm:p-6">
+              <div class="flex flex-row sm:flex-col items-baseline sm:items-start justify-between">
                 <dt class="text-sm font-medium text-gray-500">Tasks Completed</dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ weeklyStats.tasksCompleted }}</dd>
+                <dd class="text-2xl sm:text-3xl font-semibold text-gray-900 sm:mt-1">{{ weeklyStats.tasksCompleted }}</dd>
               </div>
             </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-              <div class="px-4 py-5 sm:p-6">
+            <div class="bg-white overflow-hidden shadow rounded-lg p-4 sm:p-6">
+              <div class="flex flex-row sm:flex-col items-baseline sm:items-start justify-between">
                 <dt class="text-sm font-medium text-gray-500">Points Earned</dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ weeklyStats.pointsEarned }}</dd>
+                <dd class="text-2xl sm:text-3xl font-semibold text-gray-900 sm:mt-1">{{ weeklyStats.pointsEarned }}</dd>
               </div>
             </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-              <div class="px-4 py-5 sm:p-6">
+            <div class="bg-white overflow-hidden shadow rounded-lg p-4 sm:p-6">
+              <div class="flex flex-row sm:flex-col items-baseline sm:items-start justify-between">
                 <dt class="text-sm font-medium text-gray-500">Allowance Paid</dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">${{ weeklyStats.allowancePaid }}</dd>
+                <dd class="text-2xl sm:text-3xl font-semibold text-gray-900 sm:mt-1">${{ weeklyStats.allowancePaid }}</dd>
               </div>
             </div>
           </div>
@@ -152,6 +159,14 @@
       @update-rate="updateAllowanceRate"
     />
 
+    <!-- Edit Task Modal -->
+    <EditTaskModal
+      v-if="selectedTask"
+      :task="selectedTask"
+      @close="selectedTask = null"
+      @update-task="updateTask"
+    />
+
     <!-- Allowance Management Modal -->
     <AllowanceModal
       v-if="allowanceChild"
@@ -164,12 +179,13 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import TaskList from '@/components/tasks/TaskList.vue';
 import AddChildModal from '@/components/modals/AddChildModal.vue';
 import CreateTaskModal from '@/components/modals/CreateTaskModal.vue';
 import ChildDetailsModal from '@/components/modals/ChildDetailsModal.vue';
 import AllowanceModal from '@/components/modals/AllowanceModal.vue';
+import EditTaskModal from '@/components/modals/EditTaskModal.vue';
 import { useAuthStore } from '@/stores/auth';
 import axios from 'axios';
 
@@ -180,30 +196,57 @@ export default {
     AddChildModal,
     CreateTaskModal,
     ChildDetailsModal,
-    AllowanceModal
+    AllowanceModal,
+    EditTaskModal
   },
 
   setup() {
     const authStore = useAuthStore();
     const children = ref([]);
     const recentTasks = ref([]);
+
+    const validChildren = computed(() => {
+      return children.value.filter(child => 
+        child && 
+        child.id && 
+        child.name && 
+        child.name.trim() !== '' &&
+        typeof child.allowance_balance !== 'undefined' &&
+        typeof child.weekly_allowance_rate !== 'undefined'
+      );
+    });
     const showAddChildModal = ref(false);
     const showCreateTaskModal = ref(false);
     const selectedChild = ref(null);
     const allowanceChild = ref(null);
+    const selectedTask = ref(null);
     const weeklyStats = ref({
       tasksCompleted: 0,
       pointsEarned: 0,
       allowancePaid: 0
     });
 
-    const fetchChildren = async () => {
-      try {
-        const response = await axios.get('/api/children');
-        children.value = response.data;
-      } catch (error) {
-        console.error('Failed to fetch children:', error);
-      }
+    const fetchChildren = () => {
+      // Initialize with default children since we don't have a backend yet
+      children.value = [
+        {
+          id: 1,
+          name: 'Hannah',
+          email: 'hannahastokes@icloud.com',
+          allowance_balance: 0,
+          weekly_allowance_rate: 20.00,
+          role: 'child'
+        },
+        {
+          id: 2,
+          name: 'Haven',
+          email: 'havenastokes@icloud.com',
+          allowance_balance: 0,
+          weekly_allowance_rate: 20.00,
+          role: 'child'
+        }
+      ];
+      console.log('Children initialized:', children.value);
     };
 
     const fetchRecentTasks = async () => {
@@ -228,33 +271,43 @@ export default {
 
     const addChild = async (childData) => {
       try {
-        console.log('Sending child data to server:', childData);
-        const response = await axios.post('/api/children', childData);
-        children.value.push(response.data);
+        console.log('Adding child with data:', childData);
+        const newChild = {
+          id: children.value.length + 1,
+          name: childData.name,
+          email: childData.email,
+          allowance_balance: 0,
+          weekly_allowance_rate: childData.weekly_allowance_rate,
+          role: 'child'
+        };
+        
+        children.value = [...children.value, newChild];
         showAddChildModal.value = false;
-        // Refresh children list
-        await fetchChildren();
-        // Refresh weekly stats
-        await fetchWeeklyStats();
+        console.log('Updated children list:', children.value);
       } catch (error) {
         console.error('Failed to add child:', error);
-        throw error; // Propagate error to modal
+        throw error;
       }
     };
 
     const createTask = async (taskData) => {
       try {
         console.log('Creating task with data:', taskData);
-        const response = await axios.post('/api/tasks', taskData);
-        recentTasks.value.unshift(response.data);
+        // Add task to recent tasks
+        recentTasks.value.unshift(taskData);
         showCreateTaskModal.value = false;
-        // Refresh the task list
-        await fetchRecentTasks();
+        
         // Update weekly stats
-        await fetchWeeklyStats();
+        weeklyStats.value = {
+          tasksCompleted: weeklyStats.value.tasksCompleted,
+          pointsEarned: weeklyStats.value.pointsEarned,
+          allowancePaid: weeklyStats.value.allowancePaid
+        };
+        
+        console.log('Task created successfully:', taskData);
       } catch (error) {
         console.error('Failed to create task:', error);
-        throw error; // Propagate error to modal
+        throw error;
       }
     };
 
@@ -302,6 +355,14 @@ export default {
       }
     };
 
+    const updateTask = (updatedTask) => {
+      const index = recentTasks.value.findIndex(task => task.id === updatedTask.id);
+      if (index !== -1) {
+        recentTasks.value[index] = updatedTask;
+        console.log('Task updated:', updatedTask);
+      }
+    };
+
     const calculateAllowance = async (data) => {
       try {
         const response = await axios.post('/api/allowance/calculate', data);
@@ -331,11 +392,13 @@ export default {
 
     return {
       children,
+      validChildren,
       recentTasks,
       weeklyStats,
       showAddChildModal,
       showCreateTaskModal,
       selectedChild,
+      selectedTask,
       allowanceChild,
       addChild,
       createTask,
@@ -345,7 +408,8 @@ export default {
       manageAllowance,
       updateAllowanceRate,
       calculateAllowance,
-      payAllowance
+      payAllowance,
+      updateTask
     };
   }
 };

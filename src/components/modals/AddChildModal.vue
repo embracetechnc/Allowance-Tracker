@@ -1,28 +1,19 @@
 <template>
   <div class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-center justify-center min-h-screen p-0">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
       <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
 
-      <div class="relative bg-white w-full sm:max-w-lg mx-4 sm:mx-auto rounded-lg shadow-xl overflow-hidden">
-        <!-- Modal Header -->
-        <div class="bg-gray-50 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-gray-200">
-          <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-            Add New Child
-          </h3>
-          <button
-            @click="$emit('close')"
-            class="text-gray-400 hover:text-gray-500 focus:outline-none"
-          >
-            <span class="sr-only">Close</span>
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-        <!-- Modal Content -->
-        <div class="px-4 pt-5 pb-4 sm:p-6">
-          <form class="space-y-4">
+      <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+        <div>
+          <div class="mt-3 text-center sm:mt-5">
+            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+              Add New Child
+            </h3>
+            <div class="mt-2">
+              <form>
+                <div class="space-y-4">
                   <!-- Name Field -->
                   <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 text-left">
@@ -32,19 +23,11 @@
                       <input
                         type="text"
                         id="name"
-                        name="name"
                         v-model="form.name"
                         required
-                        :class="getFieldStateClasses('name', errors, touched)"
+                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         placeholder="Enter child's name"
-                        @blur="handleFieldBlur('name')"
-                        @input="handleFieldInput('name')"
                       />
-                      <div class="mt-1" v-if="touched.name">
-                        <p :class="['text-sm', getValidationMessage('name', errors, validationSchema).color]">
-                          {{ getValidationMessage('name', errors, validationSchema).message }}
-                        </p>
-                      </div>
                     </div>
                   </div>
 
@@ -57,19 +40,11 @@
                       <input
                         type="email"
                         id="email"
-                        name="email"
                         v-model="form.email"
                         required
-                        :class="getFieldStateClasses('email', errors, touched)"
+                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         placeholder="Enter email address"
-                        @blur="handleFieldBlur('email')"
-                        @input="handleFieldInput('email')"
                       />
-                      <div class="mt-1" v-if="touched.email">
-                        <p :class="['text-sm', getValidationMessage('email', errors, validationSchema).color]">
-                          {{ getValidationMessage('email', errors, validationSchema).message }}
-                        </p>
-                      </div>
                     </div>
                   </div>
 
@@ -82,22 +57,13 @@
                       <input
                         type="number"
                         id="weekly_allowance"
-                        name="weekly_allowance_rate"
                         v-model.number="form.weekly_allowance_rate"
                         required
                         min="0"
-                        max="1000"
                         step="0.01"
-                        :class="getFieldStateClasses('weekly_allowance_rate', errors, touched)"
+                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         placeholder="0.00"
-                        @blur="handleFieldBlur('weekly_allowance_rate')"
-                        @input="handleFieldInput('weekly_allowance_rate')"
                       />
-                      <div class="mt-1" v-if="touched.weekly_allowance_rate">
-                        <p :class="['text-sm', getValidationMessage('weekly_allowance_rate', errors, validationSchema).color]">
-                          {{ getValidationMessage('weekly_allowance_rate', errors, validationSchema).message }}
-                        </p>
-                      </div>
                     </div>
                   </div>
 
@@ -115,26 +81,28 @@
                     </div>
                   </div>
 
-          </form>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-          <button
-            type="button"
-            @click="handleSubmit"
-            class="w-full sm:w-auto sm:ml-3 inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
-            :disabled="loading"
-          >
-            {{ loading ? 'Adding...' : 'Add Child' }}
-          </button>
-          <button
-            type="button"
-            class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
-            @click="$emit('close')"
-          >
-            Cancel
-          </button>
+                  <!-- Buttons -->
+                  <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                    <button
+                      type="button"
+                      @click="handleSubmit"
+                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
+                      :disabled="loading"
+                    >
+                      {{ loading ? 'Adding...' : 'Add Child' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+                      @click="$emit('close')"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -143,8 +111,6 @@
 
 <script>
 import { ref, reactive } from 'vue';
-import axios from 'axios';
-import { fieldRequirements, validateField, validateForm, getFieldStateClasses, getValidationMessage } from '@/utils/validation';
 
 export default {
   name: 'AddChildModal',
@@ -153,98 +119,48 @@ export default {
   setup(props, { emit }) {
     const loading = ref(false);
     const error = ref('');
-    const touched = reactive({});
-    const errors = reactive({});
-    
     const form = reactive({
       name: '',
       email: '',
       weekly_allowance_rate: 0
     });
 
-    const validationSchema = {
-      name: fieldRequirements.name,
-      email: fieldRequirements.email,
-      weekly_allowance_rate: {
-        required: true,
-        min: 0,
-        max: 1000,
-        message: 'Weekly allowance rate should be between $0 and $1000',
-        hint: 'Set the base weekly allowance amount'
+    const handleSubmit = () => {
+      console.log('Add Child button clicked', { formData: form });
+
+      // Validate form
+      if (!form.name.trim()) {
+        error.value = 'Name is required';
+        return;
       }
-    };
-
-    const validateField = (fieldName, value) => {
-      touched[fieldName] = true;
-      const result = validateField(value, validationSchema[fieldName]);
-      if (!result.isValid) {
-        errors[fieldName] = result.errors;
-      } else {
-        delete errors[fieldName];
+      if (!form.email.trim()) {
+        error.value = 'Email is required';
+        return;
       }
-      return result.isValid;
-    };
-
-    const handleFieldBlur = (fieldName) => {
-      validateField(fieldName, form[fieldName]);
-    };
-
-    const handleFieldInput = (fieldName) => {
-      if (touched[fieldName]) {
-        validateField(fieldName, form[fieldName]);
+      if (form.weekly_allowance_rate < 0) {
+        error.value = 'Weekly allowance rate cannot be negative';
+        return;
       }
-    };
 
-    const handleSubmit = async () => {
-      try {
-        // Mark all fields as touched
-        Object.keys(validationSchema).forEach(field => {
-          touched[field] = true;
-        });
+      loading.value = true;
+      error.value = '';
 
-        // Validate all fields
-        const { isValid, errors: validationErrors } = validateForm(form, validationSchema);
-        
-        if (!isValid) {
-          Object.assign(errors, validationErrors);
-          error.value = 'Please fix the errors before submitting';
-          return;
-        }
+      const childData = {
+        name: form.name.trim(),
+        email: form.email.trim(),
+        weekly_allowance_rate: Number(form.weekly_allowance_rate),
+        role: 'child'
+      };
 
-        loading.value = true;
-        error.value = '';
-
-        const childData = {
-          name: form.name.trim(),
-          email: form.email.trim(),
-          weekly_allowance_rate: Number(form.weekly_allowance_rate)
-        };
-
-        console.log('Submitting child data:', childData);
-        
-        // Emit the event to parent component
-        emit('add-child', childData);
-        emit('close');
-      } catch (err) {
-        console.error('Failed to add child:', err);
-        error.value = err.message || 'Failed to add child. Please try again.';
-      } finally {
-        loading.value = false;
-      }
+      console.log('Emitting add-child event with data:', childData);
+      emit('add-child', childData);
     };
 
     return {
       form,
       loading,
       error,
-      errors,
-      touched,
-      validationSchema,
-      handleSubmit,
-      handleFieldBlur,
-      handleFieldInput,
-      getFieldStateClasses,
-      getValidationMessage
+      handleSubmit
     };
   }
 };

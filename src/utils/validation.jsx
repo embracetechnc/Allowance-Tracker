@@ -81,12 +81,12 @@ export const validateField = (value, requirements) => {
 
   // Check minLength
   if (requirements.minLength && value.length < requirements.minLength) {
-    errors.push(\`Must be at least \${requirements.minLength} characters\`);
+    errors.push(`Must be at least ${requirements.minLength} characters`);
   }
 
   // Check maxLength
   if (requirements.maxLength && value.length > requirements.maxLength) {
-    errors.push(\`Must not exceed \${requirements.maxLength} characters\`);
+    errors.push(`Must not exceed ${requirements.maxLength} characters`);
   }
 
   // Check pattern
@@ -96,12 +96,12 @@ export const validateField = (value, requirements) => {
 
   // Check min value for numbers
   if (requirements.min !== undefined && Number(value) < requirements.min) {
-    errors.push(\`Must be at least \${requirements.min}\`);
+    errors.push(`Must be at least ${requirements.min}`);
   }
 
   // Check max value for numbers
   if (requirements.max !== undefined && Number(value) > requirements.max) {
-    errors.push(\`Must not exceed \${requirements.max}\`);
+    errors.push(`Must not exceed ${requirements.max}`);
   }
 
   return {
@@ -136,14 +136,14 @@ export const getFieldStateClasses = (fieldName, errors, touched) => {
   const baseClasses = 'appearance-none block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm';
   
   if (!touched || !touched[fieldName]) {
-    return \`\${baseClasses} border-gray-300 focus:ring-indigo-500 focus:border-indigo-500\`;
+    return `${baseClasses} border-gray-300 focus:ring-indigo-500 focus:border-indigo-500`;
   }
 
   if (errors && errors[fieldName]) {
-    return \`\${baseClasses} border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500\`;
+    return `${baseClasses} border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500`;
   }
 
-  return \`\${baseClasses} border-green-300 focus:ring-green-500 focus:border-green-500\`;
+  return `${baseClasses} border-green-300 focus:ring-green-500 focus:border-green-500`;
 };
 
 // Helper to format validation messages
@@ -164,4 +164,6 @@ export const getValidationMessage = (fieldName, errors, schema) => {
     color: 'text-gray-500'
   };
 };
+
+
 

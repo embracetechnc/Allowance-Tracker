@@ -1,139 +1,101 @@
 <template>
-  <div class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="fixed inset-0 overflow-y-auto z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="close"></div>
 
       <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-      <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-        <div>
-          <div class="mt-3 text-center sm:mt-5">
-            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-              Edit Task
-            </h3>
-            <div class="mt-2">
-              <form @submit.prevent="handleSubmit">
-                <div class="space-y-4">
-                  <!-- Task Name -->
-                  <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 text-left">
-                      Task Name
-                    </label>
-                    <div class="mt-1">
-                      <input
-                        type="text"
-                        id="name"
-                        v-model="form.name"
-                        required
-                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+              <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                Edit Task
+              </h3>
+              <div class="mt-4 space-y-4">
+                <div>
+                  <label for="taskName" class="block text-sm font-medium text-gray-700">Task Name</label>
+                  <input 
+                    type="text" 
+                    id="taskName" 
+                    v-model="taskData.name" 
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
+                  />
+                </div>
+                <div>
+                  <label for="taskDescription" class="block text-sm font-medium text-gray-700">Description</label>
+                  <textarea 
+                    id="taskDescription" 
+                    v-model="taskData.description" 
+                    rows="3" 
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  ></textarea>
+                </div>
+                <div>
+                  <label for="taskPoints" class="block text-sm font-medium text-gray-700">Points</label>
+                  <input 
+                    type="number" 
+                    id="taskPoints" 
+                    v-model.number="taskData.points" 
+                    min="0" 
+                    max="100" 
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
+                  />
+                </div>
+                <div>
+                  <label for="taskDueDate" class="block text-sm font-medium text-gray-700">Due Date</label>
+                  <input 
+                    type="date" 
+                    id="taskDueDate" 
+                    v-model="taskData.due_date" 
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Recurring</label>
+                  <div class="mt-2">
+                    <label class="inline-flex items-center">
+                      <input 
+                        type="checkbox" 
+                        v-model="taskData.is_recurring" 
+                        class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                       />
-                    </div>
-                  </div>
-
-                  <!-- Description -->
-                  <div>
-                    <label for="description" class="block text-sm font-medium text-gray-700 text-left">
-                      Description
+                      <span class="ml-2">Make this task recurring</span>
                     </label>
-                    <div class="mt-1">
-                      <textarea
-                        id="description"
-                        v-model="form.description"
-                        rows="3"
-                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      ></textarea>
-                    </div>
-                  </div>
-
-                  <!-- Category -->
-                  <div>
-                    <label for="category" class="block text-sm font-medium text-gray-700 text-left">
-                      Category
-                    </label>
-                    <div class="mt-1">
-                      <select
-                        id="category"
-                        v-model="form.category"
-                        required
-                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      >
-                        <option value="chores">Chores</option>
-                        <option value="homework">Homework</option>
-                        <option value="extra_credit">Extra Credit</option>
-                        <option value="behavior">Behavior</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <!-- Points -->
-                  <div>
-                    <label for="points" class="block text-sm font-medium text-gray-700 text-left">
-                      Points
-                    </label>
-                    <div class="mt-1">
-                      <input
-                        type="number"
-                        id="points"
-                        v-model.number="form.points"
-                        required
-                        min="0"
-                        step="1"
-                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Due Date -->
-                  <div>
-                    <label for="due_date" class="block text-sm font-medium text-gray-700 text-left">
-                      Due Date
-                    </label>
-                    <div class="mt-1">
-                      <input
-                        type="datetime-local"
-                        id="due_date"
-                        v-model="form.due_date"
-                        required
-                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Error Message -->
-                  <div v-if="error" class="rounded-md bg-red-50 p-4">
-                    <div class="flex">
-                      <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                        </svg>
-                      </div>
-                      <div class="ml-3">
-                        <p class="text-sm font-medium text-red-800">{{ error }}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Buttons -->
-                  <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-                    <button
-                      type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
-                      :disabled="loading"
-                    >
-                      {{ loading ? 'Saving...' : 'Save Changes' }}
-                    </button>
-                    <button
-                      type="button"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-                      @click="$emit('close')"
-                    >
-                      Cancel
-                    </button>
                   </div>
                 </div>
-              </form>
+                <div v-if="taskData.is_recurring">
+                  <label for="recurringFrequency" class="block text-sm font-medium text-gray-700">Frequency</label>
+                  <select 
+                    id="recurringFrequency" 
+                    v-model="taskData.recurring_frequency" 
+                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  >
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <button 
+            type="button" 
+            @click="saveChanges" 
+            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            Save Changes
+          </button>
+          <button 
+            type="button" 
+            @click="close" 
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>
@@ -151,79 +113,59 @@ export default {
       required: true
     }
   },
-  emits: ['close', 'update-task'],
-
+  emits: ['update-task', 'close'],
   setup(props, { emit }) {
-    const loading = ref(false);
-    const error = ref('');
-    const form = reactive({
+    const taskData = reactive({
+      id: null,
       name: '',
       description: '',
-      category: '',
       points: 0,
-      due_date: ''
+      due_date: '',
+      is_recurring: false,
+      recurring_frequency: 'weekly',
+      child_id: null
     });
 
     onMounted(() => {
-      // Initialize form with task data
-      form.name = props.task.name;
-      form.description = props.task.description || '';
-      form.category = props.task.category;
-      form.points = props.task.points;
-      form.due_date = props.task.due_date;
+      // Copy task data to our reactive object
+      Object.keys(taskData).forEach(key => {
+        if (props.task[key] !== undefined) {
+          taskData[key] = props.task[key];
+        }
+      });
+
+      // Format date if needed
+      if (props.task.due_date && typeof props.task.due_date === 'string') {
+        const date = new Date(props.task.due_date);
+        if (!isNaN(date.getTime())) {
+          taskData.due_date = date.toISOString().split('T')[0];
+        }
+      }
     });
 
-    const handleSubmit = async () => {
-      try {
-        // Validate form
-        if (!form.name.trim()) {
-          error.value = 'Task name is required';
-          return;
-        }
-        if (!form.category) {
-          error.value = 'Category is required';
-          return;
-        }
-        if (form.points < 0) {
-          error.value = 'Points cannot be negative';
-          return;
-        }
-        if (!form.due_date) {
-          error.value = 'Due date is required';
-          return;
-        }
-
-        loading.value = true;
-        error.value = '';
-
-        const updatedTask = {
-          ...props.task,
-          name: form.name.trim(),
-          description: form.description.trim(),
-          category: form.category,
-          points: Number(form.points),
-          due_date: form.due_date
-        };
-
-        console.log('Updating task:', updatedTask);
-        emit('update-task', updatedTask);
-        emit('close');
-      } catch (err) {
-        console.error('Failed to update task:', err);
-        error.value = err.message || 'Failed to update task. Please try again.';
-      } finally {
-        loading.value = false;
+    const saveChanges = () => {
+      if (!taskData.name.trim()) {
+        alert('Task name is required');
+        return;
       }
+
+      emit('update-task', { ...taskData });
+      emit('close');
+    };
+
+    const close = () => {
+      emit('close');
     };
 
     return {
-      form,
-      loading,
-      error,
-      handleSubmit
+      taskData,
+      saveChanges,
+      close
     };
   }
-};
+}
 </script>
 
-
+<style scoped>
+/* Any additional component-specific styles */
+</style>
